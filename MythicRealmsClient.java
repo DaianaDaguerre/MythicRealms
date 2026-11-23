@@ -22,13 +22,13 @@ public class MythicRealmsClient implements ClientModInitializer {
         EntityModelLayerRegistry.registerModelLayer(UNICORN_LAYER, () -> {
             ModelData data = HorseEntityModel.getModelData(Dilation.NONE);
             // El cuerno forma parte del modelo y acompaña los movimientos de la cabeza.
-            // Tres segmentos angostos forman un cuerno escalonado.
-            // Va unido a head_parts y acompaña todas las animaciones del caballo.
+            // El frente del caballo es -Z. z=-9 era el HOCICO; z=-2.5 es la frente.
+            // Unido a head_parts para seguir las animaciones de la cabeza (Minecraft 1.21.1).
             data.getRoot().getChild("head_parts").addChild("mythic_horn",
                 ModelPartBuilder.create()
-                    .uv(56, 0).cuboid(-1.0f, -15.0f, -9.0f, 2.0f, 5.0f, 2.0f)
-                    .uv(56, 10).cuboid(-0.75f, -19.0f, -8.75f, 1.5f, 4.0f, 1.5f)
-                    .uv(56, 17).cuboid(-0.4f, -22.0f, -8.4f, 0.8f, 3.0f, 0.8f),
+                    .uv(56, 0).cuboid(-1.0f, -15.0f, -2.5f, 2.0f, 5.0f, 2.0f)
+                    .uv(56, 10).cuboid(-0.75f, -19.0f, -2.25f, 1.5f, 4.0f, 1.5f)
+                    .uv(56, 17).cuboid(-0.4f, -22.0f, -2.0f, 0.8f, 3.0f, 0.8f),
                 ModelTransform.NONE);
             return TexturedModelData.of(data, 64, 64);
         });

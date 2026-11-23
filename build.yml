@@ -23,13 +23,15 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.12'
+      - name: Validar los ocho pelajes y la estructura
+        run: python3 scripts/validate_assets.py
       - name: Compilar el mod
         run: gradle --no-daemon build
       - name: Comprobar el JAR de Minecraft
-        run: test -f build/libs/mythicrealms-0.2.3.jar
+        run: test -f build/libs/mythicrealms-0.2.4.jar
       - name: Descargar JAR instalable
         uses: actions/upload-artifact@v4
         with:
-          name: MythicRealms-0.2.3-Fabric-1.21.1
-          path: build/libs/mythicrealms-0.2.3.jar
+          name: MythicRealms-0.2.4-Fabric-1.21.1
+          path: build/libs/mythicrealms-0.2.4.jar
           if-no-files-found: error
