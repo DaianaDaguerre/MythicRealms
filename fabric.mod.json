@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "mythicrealms",
+  "version": "${version}",
+  "name": "Mythic Realms",
+  "description": "Criaturas mitologicas, reliquias y mazmorras para Minecraft.",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.mythicrealms.MythicRealms"
+    ],
+    "client": [
+      "com.mythicrealms.client.MythicRealmsClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.16.10",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

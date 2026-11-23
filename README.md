@@ -1,41 +1,35 @@
-# Mythic Realms — Alpha 0.2.1 (Fabric 1.21.1)
+# Mythic Realms — Unicornio de fantasía (Alpha 0.2.2)
 
-Versión corregida del mod. Incluye el unicornio y los seis materiales (los cinco originales más pelo de unicornio).
+Proyecto completo para **Minecraft Java 1.21.1 / Fabric / Java 21**.
 
-## Correcciones
-- Sustituido el método privado `setHorseVariant` por `setVariant`, compatible con Yarn 1.21.1.
-- Sustituido `SpawnLocation.ON_GROUND` por `SpawnLocationTypes.ON_GROUND`.
-- Añadido el cuerno a la pieza `head_parts` del modelo equino.
-- GitHub Actions descarga solo `mythicrealms-0.2.1.jar`, no el JAR `sources`.
+## Qué se añadió
+- Ocho variantes de pelaje en texturas originales de 64×64: blanco (30%), celeste (25%), rosado (25%), verde (7%), azul (6%), amarillo (5%), violeta (1,5%) y rojo (0,5%).
+- El color se asigna automáticamente al aparecer y se conserva al guardar el mundo.
+- Reproducción: 90% de probabilidad de heredar el color de uno de los progenitores (50/50), y 10% de color aleatorio sujeto a las rarezas.
+- Modelo del caballo de Minecraft para reutilizar animaciones; cuerno de tres segmentos unido a la cabeza.
+- Manzana dorada para domesticar, zanahoria dorada para criar; montura de caballo con silla.
+- Conserva los seis materiales y el huevo de unicornio.
 
-## Contenido
-- `mythicrealms:unicornio` con textura y modelo provisionales, movimiento y montura de caballo.
-- Generación natural en bosque florido y pradera de montaña.
-- Domesticación con manzana dorada y guardado usando el sistema de los caballos.
-- Reproducción con zanahoria dorada.
-- `mythicrealms:pelo_unicornio`, obtenido ocasionalmente de adultos domesticados.
-- Cinco materiales de la versión 0.1 y huevo de aparición.
+**Importante:** los archivos PNG son texturas UV que se aplican al modelo, no renders. La hoja de concepto es una referencia estética, no un archivo 3D. Las texturas generadas son aproximaciones originales a esa estética y pueden ajustarse después de una prueba visual dentro de Minecraft. El cuerno es geométrico/escalonado en lugar de espiral redonda para conservar la apariencia cúbica.
 
-## Cómo subir a GitHub desde el navegador
-1. Descomprimí el ZIP.
-2. En el repositorio `DaianaDaguerre/MythicRealms`, usá **Add file → Upload files**.
-3. Arrastrá los archivos y las carpetas desde esta carpeta, **conservando todas las rutas**, especialmente `src/main/...` y `.github/workflows/build.yml`.
-4. Confirmá **Commit changes** en la rama `main`. No subas solo los archivos `.java` sueltos.
-5. En **Actions**, esperá la ejecución del commit más reciente y descargá el artifact `MythicRealms-Fabric-1.21.1-0.2.1`.
+## Cómo subirlo a GitHub
+1. Descomprimí este ZIP y arrastrá **todas las carpetas** (`src`, `.github`, etc.) y archivos a la raíz de tu repositorio en GitHub. Es necesario conservar la estructura anidada.
+2. Confirmá el commit en la rama `main`.
+3. En **Actions → Compilar Mythic Realms**, revisá el resultado. Descargá el artefacto de la versión `0.2.2` y extraé únicamente el archivo `mythicrealms-0.2.2.jar`.
+4. En `%appdata%\.minecraft\mods`, reemplazá el JAR anterior por el nuevo, junto con Fabric API compatible.
+5. No coloques archivos `*-sources.jar` en `mods`.
 
-## Instalar
-Colocá **solamente** `mythicrealms-0.2.1.jar` en `%appdata%\\.minecraft\\mods`, junto a Fabric API compatible con Minecraft 1.21.1. Quitá JAR antiguos de Mythic Realms y no instales un `*-sources.jar`.
-
-## Probar
-En Minecraft 1.21.1, en un mundo con trucos activados:
-
-```mcfunction
-/summon mythicrealms:unicornio ~ ~ ~
-/give @s mythicrealms:huevo_unicornio
-/give @s minecraft:golden_apple 3
-/give @s minecraft:golden_carrot 3
-/give @s minecraft:saddle
-/give @s mythicrealms:pelo_unicornio
+## Pruebas
 ```
+/summon mythicrealms:unicornio ~ ~ ~
+/give @s mythicrealms:huevo_unicornio 16
+/give @s minecraft:golden_apple 5
+/give @s minecraft:golden_carrot 5
+```
+En un mundo nuevo podés buscar en bosques floridos y praderas de montaña.
 
-**Nota:** el código fuente está revisado, pero la compilación con Gradle y el renderizado dentro del juego requieren validación en GitHub Actions/Minecraft.
+## Verificar los colores
+El color se elige al aparecer de acuerdo con los pesos establecidos. El cuerno y los pelajes requieren prueba visual dentro de Minecraft para confirmar la ubicación exacta de sus UV. Para comprobar variantes exóticas conviene invocar una cantidad considerable de unicornios.
+
+## Estado de validación
+Se verificó la estructura del ZIP, las rutas de recursos, los porcentajes y las referencias entre entidades y texturas. **No se ejecutó una compilación completa con Gradle ni una prueba dentro del juego en este entorno.** Si GitHub Actions marca error, compartir el registro para corregirlo antes de instalar.
