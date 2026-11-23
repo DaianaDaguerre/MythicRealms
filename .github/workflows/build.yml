@@ -35,6 +35,6 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: MythicRealms-Fabric-1.21.1-0.2.1
-          path: build/libs/mythicrealms-0.2.1.jar
+          path: build/libs/mythicrealms-*.jar
           if-no-files-found: error
           retention-days: 30
