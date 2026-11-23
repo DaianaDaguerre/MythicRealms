@@ -71,6 +71,6 @@ public class MythicRealms implements ModInitializer {
             entries.add(PELO_UNICORNIO);
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.SPAWN_EGGS).register(entries -> entries.add(UNICORN_EGG));
-        LOGGER.info("Mythic Realms Alpha 0.2.0: unicornio registrado");
+        LOGGER.info("Mythic Realms Alpha 0.2.3: unicornio y ocho pelajes registrados");
     }
 }
