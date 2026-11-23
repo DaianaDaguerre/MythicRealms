@@ -1,9 +1,8 @@
-name: Compilar Mythic Realms
+name: Compilar Mythic Realms - unicornio corregido
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -12,12 +11,11 @@ permissions:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Descargar proyecto
+      - name: Descargar repositorio
         uses: actions/checkout@v4
 
-      - name: Instalar Java 21
+      - name: Configurar Java 21
         uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -28,13 +26,78 @@ jobs:
         with:
           gradle-version: '8.12'
 
-      - name: Compilar Mythic Realms
+      - name: Corregir ubicacion de codigo y ocho texturas
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p src/main/java/com/mythicrealms/entity
+          mkdir -p src/main/java/com/mythicrealms/client
+          mkdir -p src/main/resources/assets/mythicrealms/textures/entity
+
+          # En el repositorio se subieron las versiones nuevas a la raiz.
+          # Copiarlas sobre los archivos antiguos que Gradle estaba compilando.
+          test -f UnicornEntity.java
+          test -f UnicornRenderer.java
+          test -f MythicRealmsClient.java
+          cp UnicornEntity.java src/main/java/com/mythicrealms/entity/UnicornEntity.java
+          cp UnicornRenderer.java src/main/java/com/mythicrealms/client/UnicornRenderer.java
+          cp MythicRealmsClient.java src/main/java/com/mythicrealms/client/MythicRealmsClient.java
+
+          for color in blanco celeste rosado verde azul amarillo violeta rojo; do
+            test -f "unicornio_${color}.png"
+            cp "unicornio_${color}.png" \
+              "src/main/resources/assets/mythicrealms/textures/entity/unicornio_${color}.png"
+          done
+
+          # Un nombre nuevo para distinguir esta compilacion de los JAR anteriores.
+          sed -i 's/^mod_version=.*/mod_version=0.2.5/' gradle.properties
+
+      - name: Comprobar codigo y archivos correctos
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import struct
+          root = Path('src/main')
+          entity = (root/'java/com/mythicrealms/entity/UnicornEntity.java').read_text()
+          renderer = (root/'java/com/mythicrealms/client/UnicornRenderer.java').read_text()
+          client = (root/'java/com/mythicrealms/client/MythicRealmsClient.java').read_text()
+          assert 'WEIGHTS_PER_1000' in entity and 'getCoat()' in entity, 'El codigo de colores sigue siendo el viejo'
+          assert 'return TEXTURES[' in renderer, 'El renderer sigue siendo el blanco anterior'
+          assert 'cuboid(-1.0f, -15.0f, -2.5f' in client, 'Falta el cuerno corregido'
+          for color in ('blanco','celeste','rosado','verde','azul','amarillo','violeta','rojo'):
+              p = root/'resources/assets/mythicrealms/textures/entity'/f'unicornio_{color}.png'
+              data=p.read_bytes()
+              assert data[:8] == b'\x89PNG\r\n\x1a\n' and struct.unpack('>II',data[16:24]) == (64,64), f'Textura incorrecta: {p}'
+          print('VALIDADO: codigo nuevo, cuerno y 8 PNG en las rutas correctas')
+          PY
+
+      - name: Compilar el JAR
         run: gradle --no-daemon build
 
-      - name: Subir JAR instalable
+      - name: Inspeccionar JAR final
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import zipfile
+          from pathlib import Path
+          jar = Path('build/libs/mythicrealms-0.2.5.jar')
+          assert jar.is_file(), f'No se genero {jar}'
+          with zipfile.ZipFile(jar) as z:
+              files = set(z.namelist())
+              for color in ('blanco','celeste','rosado','verde','azul','amarillo','violeta','rojo'):
+                  p = f'assets/mythicrealms/textures/entity/unicornio_{color}.png'
+                  assert p in files, f'Falta {p} dentro del JAR'
+              for cls in ('com/mythicrealms/entity/UnicornEntity.class',
+                          'com/mythicrealms/client/UnicornRenderer.class'):
+                  assert cls in files, f'Falta {cls} dentro del JAR'
+          print('JAR VALIDADO: ocho texturas y clases de unicornio incluidas')
+          PY
+
+      - name: Descargar solo JAR instalable
         uses: actions/upload-artifact@v4
         with:
-          name: MythicRealms-Fabric-1.21.1-0.2.1
-          path: build/libs/mythicrealms-*.jar
+          name: MythicRealms-0.2.5-UNICORNIO-CORREGIDO
+          path: build/libs/mythicrealms-0.2.5.jar
           if-no-files-found: error
           retention-days: 30
